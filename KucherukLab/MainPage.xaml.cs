@@ -15,10 +15,8 @@ namespace KucherukLab
             InitializeComponent();
             BindingContext = this;
 
-            // Ініціалізація списку товарів
             _products = new ObservableCollection<Product>();
 
-            // Додавання перших рядків в таблицю
             PopulateGrid();
         }
 
@@ -44,14 +42,33 @@ namespace KucherukLab
         {
             if (_products.Any())
             {
+                // Видалення останнього продукту з колекції
                 _products.RemoveAt(_products.Count - 1);
-                ProductGrid.Children.RemoveAt(ProductGrid.Children.Count - 10); // Видаляємо останній рядок
+
+                // Видалення останнього рядка з Grid
+                int lastRowIndex = ProductGrid.RowDefinitions.Count - 1;
+                if (lastRowIndex > 0) // Перевіряємо, щоб не видалити заголовок
+                {
+                    // Знаходимо всі елементи останнього рядка
+                    var elementsToRemove = ProductGrid.Children
+                        .Where(child => Grid.GetRow((BindableObject)child) == lastRowIndex)
+                        .ToList();
+
+                    // Видаляємо елементи з Grid
+                    foreach (var element in elementsToRemove)
+                    {
+                        ProductGrid.Children.Remove(element);
+                    }
+
+                    // Видаляємо саму RowDefinition
+                    ProductGrid.RowDefinitions.RemoveAt(lastRowIndex);
+                }
             }
         }
 
+
         private void PopulateGrid()
         {
-            // Встановлюємо для ProductGrid одну заголовкову рядок
             ProductGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
             foreach (var product in _products)
@@ -63,13 +80,10 @@ namespace KucherukLab
 
         private void AddProductToGrid(Product product)
         {
-            // Використовуємо rowIndex, щоб вказати номер рядка для нових товарів
             int row = ProductGrid.RowDefinitions.Count;
 
-            // Додаємо новий рядок для товару
             ProductGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
-            // Додаємо елементи до сітки, починаючи з другого рядка
             ProductGrid.Add(new Label { Text = product.Name }, 0, row);
             ProductGrid.Add(new Label { Text = product.Price.ToString("C") }, 1, row);
             ProductGrid.Add(new Label { Text = product.OriginCountry }, 2, row);
@@ -80,15 +94,15 @@ namespace KucherukLab
                 ProductGrid.Add(new Label { Text = food.ShelfLife.ToString() }, 4, row);
                 ProductGrid.Add(new Label { Text = food.Quantity.ToString() }, 5, row);
                 ProductGrid.Add(new Label { Text = food.Unit }, 6, row);
-                ProductGrid.Add(new Label { Text = "-" }, 7, row); // Прочерк для книги
-                ProductGrid.Add(new Label { Text = "-" }, 8, row); // Прочерк для книги
-                ProductGrid.Add(new Label { Text = "-" }, 9, row); // Прочерк для книги
+                ProductGrid.Add(new Label { Text = "-" }, 7, row); 
+                ProductGrid.Add(new Label { Text = "-" }, 8, row);
+                ProductGrid.Add(new Label { Text = "-" }, 9, row);
             }
             else if (product is Book book)
             {
-                ProductGrid.Add(new Label { Text = "-" }, 4, row); // Прочерк для продукту
-                ProductGrid.Add(new Label { Text = "-" }, 5, row); // Прочерк для продукту
-                ProductGrid.Add(new Label { Text = "-" }, 6, row); // Прочерк для продукту
+                ProductGrid.Add(new Label { Text = "-" }, 4, row); 
+                ProductGrid.Add(new Label { Text = "-" }, 5, row); 
+                ProductGrid.Add(new Label { Text = "-" }, 6, row); 
                 ProductGrid.Add(new Label { Text = book.Pages.ToString() }, 7, row);
                 ProductGrid.Add(new Label { Text = book.Publisher }, 8, row);
                 ProductGrid.Add(new Label { Text = book.Authors }, 9, row);
