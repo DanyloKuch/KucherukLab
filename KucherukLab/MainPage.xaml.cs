@@ -42,25 +42,20 @@ namespace KucherukLab
         {
             if (_products.Any())
             {
-                // Видалення останнього продукту з колекції
                 _products.RemoveAt(_products.Count - 1);
 
-                // Видалення останнього рядка з Grid
                 int lastRowIndex = ProductGrid.RowDefinitions.Count - 1;
-                if (lastRowIndex > 0) // Перевіряємо, щоб не видалити заголовок
+                if (lastRowIndex > 0) 
                 {
-                    // Знаходимо всі елементи останнього рядка
                     var elementsToRemove = ProductGrid.Children
                         .Where(child => Grid.GetRow((BindableObject)child) == lastRowIndex)
                         .ToList();
 
-                    // Видаляємо елементи з Grid
                     foreach (var element in elementsToRemove)
                     {
                         ProductGrid.Children.Remove(element);
                     }
 
-                    // Видаляємо саму RowDefinition
                     ProductGrid.RowDefinitions.RemoveAt(lastRowIndex);
                 }
             }
